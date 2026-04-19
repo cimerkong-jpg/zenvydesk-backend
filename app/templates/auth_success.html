@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Successful - ZenvyDesk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 48px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        
+        .success-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+        
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .welcome-text {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .info-box {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .info-box p {
+            color: #4b5563;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        
+        .button:hover {
+            background: #5568d3;
+        }
+        
+        .footer {
+            margin-top: 32px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        
+        <h1>Login Successful!</h1>
+        
+        <p class="welcome-text">
+            Welcome{{ ", " + user_name if user_name else "" }}!
+        </p>
+        
+        <div class="info-box">
+            <p>
+                You have successfully authenticated with Facebook.
+                You can now return to the ZenvyDesk application to continue.
+            </p>
+        </div>
+        
+        <a href="https://zenvydesk.site" class="button">
+            Return to ZenvyDesk
+        </a>
+        
+        <p class="footer">
+            You may close this window
+        </p>
+    </div>
+</body>
+</html>

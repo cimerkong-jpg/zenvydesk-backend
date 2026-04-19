@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: zenvydesk-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_NAME
+        value: ZenvyDesk API
+      - key: APP_ENV
+        value: production
+      - key: APP_BASE_URL
+        value: https://api.zenvydesk.site
+      - key: FRONTEND_BASE_URL
+        value: https://zenvydesk.site
+      - key: FACEBOOK_REDIRECT_URI
+        value: https://api.zenvydesk.site/auth/facebook/callback
+      - key: FACEBOOK_SCOPES
+        value: public_profile,email
+      - key: DATABASE_URL
+        value: sqlite:///./zenvydesk.db
+      - key: SESSION_EXPIRY_MINUTES
+        value: 15
+      - key: FACEBOOK_APP_ID
+        sync: false
+      - key: FACEBOOK_APP_SECRET
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true

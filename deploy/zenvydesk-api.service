@@ -1,0 +1,22 @@
+[Unit]
+Description=ZenvyDesk API - AI-powered desktop tool backend
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+RuntimeDirectory=zenvydesk
+WorkingDirectory=/opt/zenvydesk-api
+Environment="PATH=/opt/zenvydesk-api/venv/bin"
+EnvironmentFile=/opt/zenvydesk-api/.env
+ExecStart=/opt/zenvydesk-api/venv/bin/gunicorn app.main:app -c /opt/zenvydesk-api/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

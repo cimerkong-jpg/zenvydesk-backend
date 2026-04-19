@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Error - ZenvyDesk</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 48px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        
+        .error-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+        
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .error-box p {
+            color: #991b1b;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+            margin-right: 12px;
+        }
+        
+        .button:hover {
+            background: #5568d3;
+        }
+        
+        .button-secondary {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #4b5563;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        
+        .button-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .footer {
+            margin-top: 32px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+        
+        <h1>Login Could Not Be Completed</h1>
+        
+        <p class="subtitle">
+            We encountered an issue during authentication
+        </p>
+        
+        <div class="error-box">
+            <p>
+                {{ error_message if error_message else "An unexpected error occurred during the login process." }}
+            </p>
+        </div>
+        
+        <div class="buttons">
+            <a href="https://zenvydesk.site" class="button">
+                Return to ZenvyDesk
+            </a>
+            <a href="javascript:window.close()" class="button-secondary">
+                Close Window
+            </a>
+        </div>
+        
+        <p class="footer">
+            Please return to the app and try again
+        </p>
+    </div>
+</body>
+</html>
