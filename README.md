@@ -1,2 +1,0 @@
-# zenvydesk-backend
-My App
