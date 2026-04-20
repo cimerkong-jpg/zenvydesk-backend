@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     # Session
     SESSION_EXPIRY_MINUTES: int = 15
     
+    # AI Bot Integration
+    BOT_PAPE_PATH: Optional[str] = None  # Path to BOT_PAPE/fb-bot folder, if None will auto-discover
+    
     # Security
     SECRET_KEY: str
     

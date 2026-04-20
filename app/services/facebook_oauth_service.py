@@ -2,9 +2,10 @@
 Facebook OAuth service for handling OAuth flow and API interactions.
 """
 import httpx
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from app.config import settings
 from app.utils.logging import get_logger
+from app.utils.log_helpers import mask_token, log_api_call
 from app.schemas.auth import FacebookUserInfo
 
 logger = get_logger(__name__)
@@ -16,6 +17,7 @@ class FacebookOAuthService:
     OAUTH_DIALOG_URL = "https://www.facebook.com/v18.0/dialog/oauth"
     TOKEN_URL = "https://graph.facebook.com/v18.0/oauth/access_token"
     USER_INFO_URL = "https://graph.facebook.com/v18.0/me"
+    PAGES_URL = "https://graph.facebook.com/v18.0/me/accounts"
     
     @staticmethod
     def get_authorization_url(state: str) -> str:
@@ -32,7 +34,7 @@ class FacebookOAuthService:
             "client_id": settings.FACEBOOK_APP_ID,
             "redirect_uri": settings.FACEBOOK_REDIRECT_URI,
             "state": state,
-            "scope": "public_profile",
+            "scope": "public_profile,pages_show_list,pages_read_engagement,pages_manage_posts",
             "response_type": "code"
         }
         
@@ -103,4 +105,141 @@ class FacebookOAuthService:
             return None
         except Exception as e:
             logger.error(f"Error parsing user info: {str(e)}")
+            return None
+    
+    @staticmethod
+    async def fetch_managed_pages(access_token: str) -> Optional[List[Dict]]:
+        """
+        Fetch Facebook Pages that the user manages.
+        
+        Args:
+            access_token: User's Facebook access token
+            
+        Returns:
+            List of page data dicts or None if failed
+        """
+        masked_token = mask_token(access_token)
+        logger.info(f"[fetch_managed_pages] Starting - token: {masked_token}")
+        
+        params = {
+            "fields": "id,name,access_token,category,tasks",
+            "access_token": access_token
+        }
+        
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(FacebookOAuthService.PAGES_URL, params=params)
+                response.raise_for_status()
+                pages_data = response.json()
+                
+                pages = pages_data.get("data", [])
+                
+                log_api_call(
+                    logger,
+                    action="fetch_managed_pages",
+                    method="GET",
+                    url=FacebookOAuthService.PAGES_URL,
+                    status_code=response.status_code,
+                    success=True,
+                    context={"pages_count": len(pages), "token_masked": masked_token}
+                )
+                
+                return pages
+                
+        except httpx.HTTPStatusError as e:
+            error_body = e.response.text if hasattr(e.response, 'text') else str(e)
+            
+            log_api_call(
+                logger,
+                action="fetch_managed_pages",
+                method="GET",
+                url=FacebookOAuthService.PAGES_URL,
+                status_code=e.response.status_code,
+                success=False,
+                error=error_body,
+                context={"token_masked": masked_token}
+            )
+            return None
+            
+        except httpx.HTTPError as e:
+            logger.error(f"[fetch_managed_pages] HTTP error: {str(e)}, token: {masked_token}")
+            return None
+        except Exception as e:
+            logger.error(f"[fetch_managed_pages] Unexpected error: {str(e)}, token: {masked_token}")
+            return None
+    
+    @staticmethod
+    async def publish_page_post(page_id: str, page_access_token: str, message: str) -> Optional[Dict]:
+        """
+        Publish a text post to a Facebook Page.
+        
+        Args:
+            page_id: Facebook Page ID
+            page_access_token: Page access token
+            message: Text message to post
+            
+        Returns:
+            Post response dict with post_id or None if failed
+        """
+        url = f"https://graph.facebook.com/v18.0/{page_id}/feed"
+        masked_token = mask_token(page_access_token)
+        message_preview = message[:50] + "..." if len(message) > 50 else message
+        
+        logger.info(f"[publish_page_post] Starting - page_id: {page_id}, token: {masked_token}, message_length: {len(message)}")
+        
+        data = {
+            "message": message,
+            "access_token": page_access_token
+        }
+        
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(url, data=data)
+                response.raise_for_status()
+                post_data = response.json()
+                
+                post_id = post_data.get("id")
+                
+                log_api_call(
+                    logger,
+                    action="publish_page_post",
+                    method="POST",
+                    url=url,
+                    status_code=response.status_code,
+                    success=True,
+                    context={
+                        "page_id": page_id,
+                        "post_id": post_id,
+                        "message_length": len(message),
+                        "message_preview": message_preview,
+                        "token_masked": masked_token
+                    }
+                )
+                
+                return post_data
+                
+        except httpx.HTTPStatusError as e:
+            error_body = e.response.text if hasattr(e.response, 'text') else str(e)
+            
+            log_api_call(
+                logger,
+                action="publish_page_post",
+                method="POST",
+                url=url,
+                status_code=e.response.status_code,
+                success=False,
+                error=error_body,
+                context={
+                    "page_id": page_id,
+                    "message_length": len(message),
+                    "token_masked": masked_token
+                }
+            )
+            return None
+            
+        except httpx.HTTPError as e:
+            logger.error(f"[publish_page_post] HTTP error: {str(e)}, page_id: {page_id}, token: {masked_token}")
+            return None
+        except Exception as e:
+            logger.error(f"[publish_page_post] Unexpected error: {str(e)}, page_id: {page_id}, token: {masked_token}")
             return None

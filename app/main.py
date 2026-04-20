@@ -1,4 +1,4 @@
-py -3.11 -m venv .venv"""
+"""
 ZenvyDesk API - Main application entry point.
 
 An AI-powered desktop tool backend that supports Facebook OAuth login
@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from app.config import settings
 from app.db.base import init_db
 from app.utils.logging import setup_logging, get_logger
-from app.routes import health, auth_facebook, auth_session, data_deletion
+from app.routes import health, auth_facebook, auth_session, data_deletion, facebook_pages, post_history, ai_content, content_drafts
 
 # Setup logging
 setup_logging(app_name="ZenvyDesk", level="INFO" if settings.APP_ENV == "production" else "DEBUG")
@@ -61,6 +61,10 @@ app.include_router(health.router, tags=["Health"])
 app.include_router(auth_facebook.router, tags=["Authentication"])
 app.include_router(auth_session.router, tags=["Session"])
 app.include_router(data_deletion.router, tags=["Data Deletion"])
+app.include_router(facebook_pages.router, tags=["Facebook Pages"])
+app.include_router(post_history.router, tags=["Post History"])
+app.include_router(ai_content.router, tags=["AI Content"])
+app.include_router(content_drafts.router, tags=["Content Drafts"])
 
 
 @app.get("/")

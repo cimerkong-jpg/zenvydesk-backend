@@ -11,7 +11,9 @@ from app.db.session import get_db
 from app.services.facebook_oauth_service import FacebookOAuthService
 from app.services.user_service import UserService
 from app.services.session_service import SessionService
+from app.services.page_service import PageService
 from app.utils.logging import get_logger
+from app.utils.log_helpers import log_flow_step, mask_session_id
 
 logger = get_logger(__name__)
 
@@ -150,6 +152,18 @@ async def facebook_callback(
         SessionService.mark_session_success(db, login_session, user)
         
         logger.info(f"Successfully authenticated user {user.id} via Facebook")
+        
+        # Fetch and store user's Facebook Pages
+        try:
+            pages_data = await FacebookOAuthService.fetch_managed_pages(access_token)
+            if pages_data:
+                PageService.upsert_user_pages(db, user.id, pages_data)
+                logger.info(f"Fetched and stored {len(pages_data)} pages for user {user.id}")
+            else:
+                logger.info(f"No pages found for user {user.id}")
+        except Exception as page_error:
+            # Don't fail the login if page fetching fails
+            logger.warning(f"Failed to fetch pages for user {user.id}: {str(page_error)}")
         
         return templates.TemplateResponse(
             "auth_success.html",
