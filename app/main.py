@@ -1,4 +1,4 @@
-"""
+py -3.11 -m venv .venv"""
 ZenvyDesk API - Main application entry point.
 
 An AI-powered desktop tool backend that supports Facebook OAuth login
