@@ -32,7 +32,7 @@ class FacebookOAuthService:
             "client_id": settings.FACEBOOK_APP_ID,
             "redirect_uri": settings.FACEBOOK_REDIRECT_URI,
             "state": state,
-            "scope": settings.FACEBOOK_SCOPES,
+            "scope": "public_profile",
             "response_type": "code"
         }
         
@@ -85,7 +85,7 @@ class FacebookOAuthService:
             FacebookUserInfo object or None if failed
         """
         params = {
-            "fields": "id,name,email",
+            "fields": "id,name",
             "access_token": access_token
         }
         
